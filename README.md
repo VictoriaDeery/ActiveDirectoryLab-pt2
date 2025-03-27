@@ -30,8 +30,13 @@ noteeeee here do we "- Coming Up!: In the next repository, we will reset users' 
 <h2>Steps:</h2>
 
 -  A. Dealing with Account Lockouts
--  5 min mark
-  1. log into dc-1 with any user, 11 times with the wrong password to generate logs and force lock out. Now typing the correct password, we would expect to be locked out for so many failed attempts, but we are not...yet. So we will use Group Policy to configure the domain password lockout policy. From there we update the  Account Lockout in AD.log into dc-1 with jane_admin and open Active Diretory Users and Computers. in _EMPLOYEES find the user who had failed passwords by name. double click the user name then go to account
+  <p>
+   group policy, account lockout configuration via group policy.
+use dc-1, right-click start, go to run, type gpmc.msc for the group policy management console. In GPMC navigate to group policy objectsby expanding gpm -> forest... ->domains ->mydomain.com and we'll use the "default domain policy" under our mydomain.com. ->new or in this case, right-click default domain policy under our domainan existing GPO ->edit. select "computer config to expand it -> policies -> windows settings -> security settings -> account policies ->lockout policies. from there we can configure: how long the account is locked out before auto-unlock (account lockout duration), number of attempts to trigger lockout (account lockout threshold), and reset account lockout timer. set lockout duration to 30min
+</p>
+![image](https://github.com/user-attachments/assets/d50e372f-7c4d-4e70-aabd-a71693244eca)
+
+  1. log into dc-1 with any user, 11 times with the wrong password to generate logs and force lock out. Now typing the correct password, we would expect to be locked out for so many failed attempts, but we are notlocked out...yet. So we will use Group Policy to configure the domain password lockout policy. From there we update the  Account Lockout policy in AD using group policy .log into dc-1 with jane_admin and open Active Diretory Users and Computers. in _EMPLOYEES find the user who had failed passwords by name. double click the user name then go to account
 
 
 
