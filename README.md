@@ -22,79 +22,57 @@ noteeeee here do we "- Coming Up!: In the next repository, we will reset users' 
 
 <h2>Outline:</h2>
 
--  A. Dealing with Account Lockouts
--  B. Enabling and Disabling Accounts
--  C. Observing authentication and security Logs
--  D. Group Policy
+-  A. Group Policy
+-  B. Dealing with Account Lockouts
+-  C. Enabling and Disabling Accounts
+-  D. Observing authentication and security Logs
+-  
 
 <h2>Steps:</h2>
 
--  A. Dealing with Account Lockouts
+-  A. Group Policy: Account lockout configuration via group policy
   <p>
-   group policy, account lockout configuration via group policy.
-use dc-1, right-click start, go to run, type gpmc.msc for the group policy management console. In GPMC navigate to group policy objectsby expanding gpm -> forest... ->domains ->mydomain.com and we'll use the "default domain policy" under our mydomain.com. ->new or in this case, right-click default domain policy under our domainan existing GPO ->edit. select "computer config to expand it -> policies -> windows settings -> security settings -> account policies ->lockout policies. from there we can configure: how long the account is locked out before auto-unlock (account lockout duration), number of attempts to trigger lockout (account lockout threshold), and reset account lockout timer. set lockout duration to 30min
+<img src="https://github.com/user-attachments/assets/53a1b861-08fb-4a5e-9d84-1c7019190b88" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+
+<p>
+1. Use dc-1, right-click start, go to run, type gpmc.msc for the group policy management console. In GPMC navigate to group policy objects by expanding gpm -> forest... ->domains ->mydomain.com and we'll use the "default domain policy" under our mydomain.com. ->new or in this case, right-click default domain policy under our domainan existing GPO ->edit. select "computer config to expand it -> policies -> windows settings -> security settings -> account policies ->lockout policies. from there we can configure: how long the account is locked out before auto-unlock (account lockout duration), number of attempts to trigger lockout (account lockout threshold), and reset account lockout timer. Right click the policy -> Properties -> check "define this property setting" to set account lockout duration to 15 min, set account lockout threshold to 5 (may happen automatically), set "allow admin lockout" to enabled, and set "reset account lockout counter after" to 10 minutes. On the GPO window, under the "settings" tab you can see the reflected changes. The policy will update after 90 minutes, or immediately if you force the policy to refresh by searching for "command prompt" in the windows search and typing "gpupdate /force" in dc-1. It will update the policy and inform you that it has been completed successfully. If you want a more detailed report, open command as an admin, you will see GP wa applied, when, and other information. 
 </p>
-![image](https://github.com/user-attachments/assets/d50e372f-7c4d-4e70-aabd-a71693244eca)
+<img src="https://github.com/user-attachments/assets/d50e372f-7c4d-4e70-aabd-a71693244eca" height="80%" width="80%" alt="Disk Sanitization Steps"/>
 
-  1. log into dc-1 with any user, 11 times with the wrong password to generate logs and force lock out. Now typing the correct password, we would expect to be locked out for so many failed attempts, but we are notlocked out...yet. So we will use Group Policy to configure the domain password lockout policy. From there we update the  Account Lockout policy in AD using group policy .log into dc-1 with jane_admin and open Active Diretory Users and Computers. in _EMPLOYEES find the user who had failed passwords by name. double click the user name then go to account
+<img src="https://github.com/user-attachments/assets/efadc96d-e38f-4967-92d1-b0c5c164ddec" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+
+<p>
+ 
+</p>
+-  B. Dealing with Account Lockouts and password resets
+ <p>
+ 
+</p>
+  1. log out. then log into one of the VMs with any user, 11 times with the wrong password to generate logs and force lock out. Now typing the correct password, we would expect to be locked out for so many failed attempts because of the configuration we set Account Lockout policy AD using group policy in the previous step.
+   <p>
+<img src="https://github.com/user-attachments/assets/a894fb50-0f6f-431f-b050-12ca12f60299" height="80%" width="80%" alt="Disk Sanitization Steps"/>
 
 
-
--  B. Enabling and Disabling Accounts
--  C. Observing authentication and security Logs
--  D. Group Policy
   </p>
-  1. Log into dc-1 as domain admin and open PowerShell Ise as admin by right-clicking it. copy the code from the file at the top of this repository titled "Generate-Names-Create-Users" then back in Powershell create a new file by clicking the first icon below "file", paste it in there and then type ctrl+s to save it to the desktop calling it "create-users" hit the green arrow to run the script to generate users.
+  2. From there we unlock the account as an admin. Log into dc-1 with jane_admin or labuser and open Active Diretory Users and Computers. Right-click "mydomain.com" -> "find" -> then search by name for the individual account -> "Find now" -> double click the user's username that was populated below -> in the new window select the "account" tab -> "unlock account" -> Apply. You may try logging in as the previous locked user to confirm success.
 
+<p>
+ 3. To reset passwords: Log into dc-1. Again, go to Active Directory Users and Computers -> right-click mydomain.com "find" -> then search by name for the individual account -> "Find now" -> right-click the user's username that was populated below -> "reset password" ->in the new window you can make the new password and unlock the account too.
+ <p>
   
- - H. Confirm by logging into the Windows 10 computer using a normal domain user, which we will create)
-   <p>
-<img src="https://github.com/user-attachments/assets/4dccc062-34a1-4659-9f95-25dd70af1436" height="80%" width="80%" alt="Disk Sanitization Steps"/>
  </p>
-  1. Every user being created will have the specified "Password1" password unless you change that in the script. If you click into the OU "_EMPLOYEES" you will now see many users. Select a random user For example, I choose topuh.goto. (If you double-click a user and select "member of," you'll see that by default, they are a member of the domain users, which is the group we allowed remote access for in a previous step. Close client-1's connection with Jane Doe. Log in to client-1 with the username mydomain.com\topuh.goto, and if you open the command prompt, you will see there is a local profile on this computer for topuh.goto. And if you select file explorer -> this PC -> Windows (C:) drive -> users, you will see all users that logged in. You may sign out of client-1
-   <p>
+ -  C. Enabling and Disabling Accounts
+ <p>
+ 1. Log into dc-1. Again, go to Active Directory Users and Computers -> right-click mydomain.com "find" -> then search by name for the individual account -> "Find now" -> right-click the user's username that was populated below -> "disable account" or "enable account." You can try to login using an enabled account and you will see and error saying the account has been disabled. There is usually a serious reason an account has been disabled and it should not be taken at face value to simply re-enable it.
 
-
-
-
-
-
-
-
-
-
-
- <br />
-Select the disk:  <br/>
-<img src="https://i.imgur.com/tcTyMUE.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-<br />
-<br />
-Enter the number of passes: <br/>
-<img src="https://i.imgur.com/nCIbXbg.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-<br />
-<br />
-Confirm your selection:  <br/>
-<img src="https://i.imgur.com/cdFHBiU.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-<br />
-<br />
-Wait for the process to complete (may take some time):  <br/>
-<img src="https://i.imgur.com/JL945Ga.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-<br />
-<br />
-Sanitization complete:  <br/>
-<img src="https://i.imgur.com/K71yaM2.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-<br />
-<br />
-Observe the wiped disk:  <br/>
-<img src="https://i.imgur.com/AeZkvFQ.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+ </p>
+-  D. Observing authentication and security Logs
 </p>
+<img src="https://github.com/user-attachments/assets/53d3bc87-3a73-4a08-a6cd-02879df19c14" height="80%" width="80%" alt="Disk Sanitization Steps"/>
 
-<!--
- ```diff
-- text in red
-+ text in green
-! text in orange
-# text in gray
-@@ text in purple (and bold)@@
-```
---!>
+<p>
+ 
+</p>
+Using the dc-1 domain controller, in the windows search bar type "eventvwr.msc" to open the event viewer of all the authentication logs. Expand windows logs -> right-click security -> find -> search the user in question -> Find next. Repeating this process on the client machine client-1, you can also view these logs, in addition to "audit failure" and "event ID4625", however you would either need to log in to the client-1 as an admin, or when you get to seeing the eventvwr.msc, riht-click it to run as an admin and then use an admin's credentials for the context. Event ID4625 is a log in failure ID.
+
+  </p>
