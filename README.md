@@ -20,13 +20,16 @@ noteeeee here do we "- Coming Up!: In the next repository, we will reset users' 
 - <b>Windows 10</b> (21H2)
 - <b>Windows 2022</b>
 
+<h2>Prerequisites</h2>
+
+- Active Directory Lab part 1 https://github.com/VictoriaDeery/ActiveDirectoryLab
+
 <h2>Outline:</h2>
 
 -  A. Group Policy
 -  B. Dealing with Account Lockouts
 -  C. Enabling and Disabling Accounts
 -  D. Observing authentication and security Logs
--  
 
 <h2>Steps:</h2>
 
